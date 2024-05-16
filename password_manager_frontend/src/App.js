@@ -1,5 +1,11 @@
-function App() {
-  return <div className="App"></div>;
-}
+import React from "react";
+import { Route } from "wouter";
+import Login from "./pages/Login";
 
-export default App;
+export default function App() {
+  return (
+    <div className="App">
+      <Route path="/login" component={Login} />
+    </div>
+  );
+}
