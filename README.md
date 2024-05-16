@@ -7,7 +7,7 @@ Projektstruktur:
 
 
 Grundkonzept:
-![image](https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/c8539499-fdf2-46d0-838f-3f17973f61b3)
+![image](https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/d358dd15-516b-483b-8e01-f7bb1d13b0b7)
 
 Verschlüsselungsmehtode:
 Bcrypt
