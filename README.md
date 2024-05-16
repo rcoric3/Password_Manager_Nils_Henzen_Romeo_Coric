@@ -1,9 +1,9 @@
 # Password_Manager_Nils_Henzen_Romeo_Coric
 # Dokumentation
 Projektstruktur:
-Frontend: React js
-Backend: Bun js
-Database:
+- Frontend: React js
+- Backend: Bun js
+- Database:
 
 
 Verschlüsselungsmehtode:
