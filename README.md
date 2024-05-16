@@ -3,7 +3,7 @@
 Projektstruktur:
 - Frontend: React js
 - Backend: Bun js
-- Database:
+- Database: Maria DB
 
 
 Grundkonzept:
