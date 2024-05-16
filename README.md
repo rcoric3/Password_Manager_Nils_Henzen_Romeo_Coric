@@ -1,12 +1,13 @@
 # Password_Manager_Nils_Henzen_Romeo_Coric
 # Dokumentation
 Projektstruktur:
-Frontend:
-Backend:
+Frontend: React js
+Backend: Bun js
 Database:
 
 
 Verschlüsselungsmehtode:
+Bcrypt
 
 
 Passwortwiederherstellung:
