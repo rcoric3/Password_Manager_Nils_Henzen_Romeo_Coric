@@ -1,5 +1,6 @@
 import React from "react";
 import { Route } from "wouter";
+import "./input.css";
 import Login from "./pages/Login";
 
 export default function App() {
