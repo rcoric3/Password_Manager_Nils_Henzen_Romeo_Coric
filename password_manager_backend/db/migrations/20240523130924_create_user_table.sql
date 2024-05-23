@@ -1,0 +1,11 @@
+-- migrate:up
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  password TEXT NOT NULL,
+  secret_key VARCHAR NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+-- migrate:down
+DROP TABLE IF EXISTS users;
