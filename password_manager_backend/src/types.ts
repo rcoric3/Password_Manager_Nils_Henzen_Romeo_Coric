@@ -1,25 +1,25 @@
 import { Generated, Insertable, Selectable } from 'kysely';
 
 export interface Database {
-  users: Users;
-  categories: Categories;
-  credentials: Credentials;
+  users: UsersTable;
+  categories: CategoriesTable;
+  credentials: CredentialsTable;
 }
 
-export interface Users {
+export interface UsersTable {
   user_id: Generated<number>;
   username: string;
   user_password: string;
   unique_key: string;
 }
 
-export interface Categories {
+export interface CategoriesTable {
   category_id: Generated<number>;
   category_name: string;
   user_id: number;
 }
 
-export interface Credentials {
+export interface CredentialsTable {
   credential_id: Generated<number>;
   site_url: string;
   username: string;
@@ -30,12 +30,12 @@ export interface Credentials {
   user_id: number;
 }
 
-export type NewUser = Insertable<Users>;
-export type User = Selectable<Users>;
+export type NewUser = Insertable<UsersTable>;
+export type Users = Selectable<UsersTable>;
 
-export type NewCategory = Insertable<Categories>;
-export type Category = Selectable<Categories>;
+export type NewCategory = Insertable<CategoriesTable>;
+export type Categories = Selectable<CategoriesTable>;
 
-export type NewCredential = Insertable<Credentials>;
-export type Credential = Selectable<Credentials>;
+export type NewCredential = Insertable<CredentialsTable>;
+export type Credentials = Selectable<CredentialsTable>;
 

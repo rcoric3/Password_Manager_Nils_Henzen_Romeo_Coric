@@ -1,6 +1,12 @@
-import { db } from "../db"
-import { Users } from "../types"
+import { db } from "../db";
+import { Users, NewUser } from "../types";
 
-export async function findPersonByUserName(Name:String) {
-    return await db.selectFrom("users")
-}
+export const createNewUser = async (
+  users: NewUser
+): Promise<Users | undefined> => {
+  return await db
+    .insertInto("users")
+    .values(users)
+    .returningAll()
+    .executeTakeFirstOrThrow();
+};
