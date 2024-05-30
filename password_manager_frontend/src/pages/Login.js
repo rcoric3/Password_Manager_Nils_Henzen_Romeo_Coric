@@ -1,9 +1,11 @@
 import React from "react";
 import { useState } from "react";
+import { useLocation } from "wouter";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [, navigate] = useLocation();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -25,6 +27,10 @@ export default function Login() {
 
     setUsername("");
     setPassword("");
+  };
+
+  const handleRegisterClick = () => {
+    navigate("/register");
   };
 
   return (
@@ -68,9 +74,16 @@ export default function Login() {
         <div className="text-center">
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+            className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
           >
             Login
+          </button>
+          <button
+            type="button"
+            onClick={handleRegisterClick}
+            className="ml-4 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+          >
+            Register
           </button>
         </div>
       </form>
