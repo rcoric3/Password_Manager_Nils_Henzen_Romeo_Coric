@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "db:up": "docker-compose -f db/docker-compose.yml up -d",
+    "db:migrate": "bun run dbmate up",
+    "db:down": "docker-compose -f db/docker-compose.yml down"
+  },
+  "dependencies": {
+    "hono": "^4.3.10",
+    "kysely": "^0.27.3",
+    "pg": "^8.11.5",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/pg": "^8.10.9",
+    "@types/uuid": "^9.0.8",
+    "bun-types": "^1.0.7",
+    "dbmate": "^2.16.0"
+  }
+}
