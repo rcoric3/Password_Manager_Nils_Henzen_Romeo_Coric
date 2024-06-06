@@ -7,7 +7,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [, navigate] = useLocation();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (username.trim() === "" || password.trim() === "") {
@@ -22,13 +22,34 @@ export default function Login() {
     const sanitizedUsername = sanitizeInput(username);
     const sanitizedPassword = sanitizeInput(password);
 
-    console.log("Username:", sanitizedUsername);
-    console.log("Password:", sanitizedPassword);
+    try {
+      const response = await fetch("http://localhost:4000/v1/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: sanitizedUsername,
+          user_password: sanitizedPassword,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        localStorage.setItem("token", data.unique_key);
+        navigate("/dashboard");
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || "Unknown error");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
 
     setUsername("");
     setPassword("");
   };
-
   const handleRegisterClick = () => {
     navigate("/register");
   };

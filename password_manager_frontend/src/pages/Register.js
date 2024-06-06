@@ -24,9 +24,6 @@ export default function Register() {
     const sanitizedUsername = sanitizeInput(username);
     const sanitizedPassword = sanitizeInput(password);
 
-    console.log("Username:", sanitizedUsername);
-    console.log("Password:", sanitizedPassword);
-
     try {
       const response = await fetch("http://localhost:4000/v1/register", {
         method: "POST",
