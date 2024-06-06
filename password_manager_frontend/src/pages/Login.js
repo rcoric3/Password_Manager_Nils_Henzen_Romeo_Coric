@@ -37,7 +37,7 @@ export default function Login() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        localStorage.setItem("token", data.unique_key);
+        localStorage.setItem("token", data.username);
         navigate("/dashboard");
       } else {
         const errorData = await response.json();
