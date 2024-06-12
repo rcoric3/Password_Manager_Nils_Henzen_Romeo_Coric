@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "wouter";
+import { Route, Switch } from "wouter";
 import "./input.css";
 import ProtectedRoute from "./protected/ProtectedRoute";
 import Login from "./pages/Login";
@@ -8,10 +8,10 @@ import Register from "./pages/Register";
 
 export default function App() {
   return (
-    <div className="App">
+    <Switch>
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <ProtectedRoute path="/dashboard" component={Dashboard} />
-    </div>
+    </Switch>
   );
 }
