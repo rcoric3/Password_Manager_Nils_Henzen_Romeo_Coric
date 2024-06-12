@@ -43,13 +43,13 @@ bun run dev
 bun run start
 ``` 
 
-## Env files im backend /backend .env
+### Env files im backend /backend .env
 
 ```bash
 DATABASE_URL=postgres://user:password@127.0.0.1:5432/passwordManager?sslmode=disable
 ``` 
 
-## Env files im frontend /frontend .env
+### Env files im frontend /frontend .env
 
 ```bash
 PORT=5173
