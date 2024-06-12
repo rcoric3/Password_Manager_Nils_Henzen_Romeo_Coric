@@ -36,8 +36,13 @@ export default function Login() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        localStorage.setItem("token", data.username);
+        localStorage.setItem(
+          "token",
+          JSON.stringify({
+            username: data.username,
+            user_id: data.user_id,
+          })
+        );
         navigate("/dashboard");
       } else {
         const errorData = await response.json();

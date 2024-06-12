@@ -1,6 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
-import { Users } from "./types";
-import { createNewUser, get_user } from "./repo/PwdManagerRepo";
+import { NewCredential, Users } from "./types";
+import {
+  createNewCredential,
+  createNewUser,
+  create_new_category,
+  get_user,
+} from "./repo/PwdManagerRepo";
 
 export const createNewAppUser = async (
   username: string,
@@ -16,6 +21,16 @@ export const createNewAppUser = async (
   };
 
   return await createNewUser(newUser);
+};
+export const create_new_app_category = async (
+  user_id: number,
+  category_name: string
+) => {
+  const newCategory = {
+    user_id: user_id,
+    category_name: category_name,
+  };
+  return await create_new_category(newCategory);
 };
 
 export const get_app_user = async (username: string, user_password: string) => {
@@ -34,4 +49,26 @@ export const get_app_user = async (username: string, user_password: string) => {
   }
 
   return user_from_db;
+};
+
+export const createNewAppCredential = async (
+  site_url: string,
+  username: string,
+  user_password: string,
+  site_notes: string | null,
+  user_email: string | null,
+  category_id: number,
+  user_id: number
+): Promise<NewCredential | undefined> => {
+  const newCredential: NewCredential = {
+    site_url,
+    username,
+    user_password,
+    site_notes,
+    user_email,
+    category_id,
+    user_id,
+  };
+
+  return await createNewCredential(newCredential);
 };

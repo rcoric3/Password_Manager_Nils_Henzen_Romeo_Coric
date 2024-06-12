@@ -1,5 +1,12 @@
 import { db } from "../db";
-import { Users, NewUser } from "../types";
+import {
+  Users,
+  NewUser,
+  NewCredential,
+  Credentials,
+  Categories,
+  NewCategory,
+} from "../types";
 
 export const createNewUser = async (
   users: NewUser
@@ -19,4 +26,48 @@ export const get_user = async (username: string, user_password: string) => {
     .executeTakeFirst();
 
   return user_from_db;
+};
+
+export const createNewCredential = async (
+  credential: NewCredential
+): Promise<Credentials | undefined> => {
+  return await db
+    .insertInto("credentials")
+    .values(credential)
+    .returningAll()
+    .executeTakeFirstOrThrow();
+};
+
+export const create_new_category = async (
+  categories: NewCategory
+): Promise<Categories | undefined> => {
+  return await db
+    .insertInto("categories")
+    .values(categories)
+    .returningAll()
+    .executeTakeFirst();
+};
+
+export const getAllCategories = async () => {
+  return await db.selectFrom("categories").selectAll().execute();
+};
+
+export const getAllCredentials = async (user_id: number) => {
+  return await db
+    .selectFrom("credentials")
+    .where("user_id", "=", user_id)
+    .selectAll()
+    .execute();
+};
+
+export const getCredentialsByCategory = async (
+  user_id: number,
+  category_id: number
+) => {
+  return await db
+    .selectFrom("credentials")
+    .where("user_id", "=", user_id)
+    .where("category_id", "=", category_id)
+    .selectAll()
+    .execute();
 };

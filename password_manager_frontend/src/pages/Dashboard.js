@@ -1,15 +1,154 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
-  const username = localStorage.getItem("token");
+  const token = JSON.parse(localStorage.getItem("token"));
+  const username = token ? token.username : "";
+  const userId = token ? token.user_id : null;
+
+  const [siteUrl, setSiteUrl] = useState("");
+  const [credentialUsername, setCredentialUsername] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [siteNotes, setSiteNotes] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [credentials, setCredentials] = useState([]);
+
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [isCredentialFormVisible, setIsCredentialFormVisible] = useState(false);
+  const [isCategoryFormVisible, setIsCategoryFormVisible] = useState(false);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:4000/v1/categories");
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data);
+        } else {
+          console.error("Error fetching categories");
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+    fetchCredentials();
+  }, []);
+
+  //encryption anschauen
+
+  const fetchCredentials = async (categoryId = null) => {
+    try {
+      const requestBody = {
+        user_id: userId,
+        category_id: categoryId ? parseInt(categoryId) : undefined,
+      };
+      const response = await fetch("http://localhost:4000/v1/credentials", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCredentials(data);
+      } else {
+        console.error("Error fetching credentials");
+      }
+    } catch (error) {
+      console.error("Error fetching credentials:", error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  const handleCreateNewCredential = async () => {
+    const newCredential = {
+      site_url: siteUrl,
+      username: credentialUsername,
+      user_password: userPassword,
+      site_notes: siteNotes,
+      user_email: userEmail,
+      category_id: parseInt(selectedCategoryId),
+      user_id: userId,
+    };
+
+    try {
+      const response = await fetch("http://localhost:4000/v1/credentials", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCredential),
+      });
+
+      if (response.ok) {
+        alert("New credential created successfully");
+        setSiteUrl("");
+        setCredentialUsername("");
+        setUserPassword("");
+        setSiteNotes("");
+        setUserEmail("");
+        fetchCredentials();
+        setIsCredentialFormVisible(false);
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || "Unknown error");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleCreateNewCategory = async () => {
+    if (newCategoryName.trim() === "") {
+      alert("Category name cannot be empty");
+      return;
+    }
+
+    const newCategory = {
+      category_name: newCategoryName,
+      user_id: userId,
+    };
+
+    try {
+      const response = await fetch("http://localhost:4000/v1/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCategory),
+      });
+
+      if (response.ok) {
+        alert("New category created successfully");
+
+        const data = await response.json();
+        setCategories([...categories, data]);
+        setNewCategoryName("");
+        setIsCategoryFormVisible(false);
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || "Unknown error");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategoryId(categoryId);
+    fetchCredentials(categoryId);
+  };
   return (
     <div className="relative min-h-screen flex flex-col">
       <div className="bg-blue-600 text-white py-8">
@@ -22,54 +161,183 @@ export default function Dashboard() {
       </div>
       <div className="container mx-auto p-4 flex-grow">
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-300">
-            <thead>
-              <tr>
-                <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">
-                  URL
-                </th>
-                <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">
-                  Username
-                </th>
-                <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">
-                  Password
-                </th>
-                <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">
-                  Notes
-                </th>
-                <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">
-                  Email
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="px-6 py-4 border-b border-gray-300">
-                  <div></div>
-                </td>
-                <td className="px-6 py-4 border-b border-gray-300">
-                  <div></div>
-                </td>
-                <td className="px-6 py-4 border-b border-gray-300">
-                  <div></div>
-                </td>
-                <td className="px-6 py-4 border-b border-gray-300">
-                  <div></div>
-                </td>
-                <td className="px-6 py-4 border-b border-gray-300">
-                  <div></div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <button
+            onClick={() => setIsCredentialFormVisible(true)}
+            className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 mr-4"
+          >
+            Create Entry
+          </button>
+          <button
+            onClick={() => setIsCategoryFormVisible(true)}
+            className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+          >
+            Create Category
+          </button>
+
+          {isCredentialFormVisible && (
+            <div className="p-4 bg-white rounded-md mt-4">
+              <h2 className="text-xl font-bold mb-2">Create New Entry</h2>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <select
+                  value={selectedCategoryId}
+                  onChange={(e) => setSelectedCategoryId(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md col-span-2"
+                >
+                  <option value="" disabled>
+                    Select Category
+                  </option>
+                  {categories.map((category) => (
+                    <option
+                      key={category.category_id}
+                      value={category.category_id}
+                    >
+                      {category.category_name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  placeholder="Site URL"
+                  value={siteUrl}
+                  onChange={(e) => setSiteUrl(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md"
+                />
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={credentialUsername}
+                  onChange={(e) => setCredentialUsername(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md"
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={userPassword}
+                  onChange={(e) => setUserPassword(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md"
+                />
+                <input
+                  type="text"
+                  placeholder="Email"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md"
+                />
+                <input
+                  type="text"
+                  placeholder="Notes"
+                  value={siteNotes}
+                  onChange={(e) => setSiteNotes(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md col-span-2"
+                />
+              </div>
+              <button
+                onClick={handleCreateNewCredential}
+                className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+              >
+                Create
+              </button>
+              <button
+                onClick={() => setIsCredentialFormVisible(false)}
+                className="px-4 py-2 bg-gray-300 text-black font-semibold rounded-md hover:bg-gray-400 ml-2"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+
+          {isCategoryFormVisible && (
+            <div className="p-4 bg-white rounded-md mt-4">
+              <h2 className="text-xl font-bold mb-2">Create New Category</h2>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Category Name"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md w-full"
+                />
+              </div>
+              <button
+                onClick={handleCreateNewCategory}
+                className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+              >
+                Create Category
+              </button>
+              <button
+                onClick={() => setIsCategoryFormVisible(false)}
+                className="px-4 py-2 bg-gray-300 text-black font-semibold rounded-md hover:bg-gray-400 ml-2"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+
+          <div className="mt-4">
+            <h2 className="text-xl font-bold mb-2">Filter by Category</h2>
+            <select
+              value={selectedCategoryId}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md"
+            >
+              <option value="">All Categories</option>
+              {categories.map((category) => (
+                <option key={category.category_id} value={category.category_id}>
+                  {category.category_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mt-4">
+            <h2 className="text-xl font-bold mb-2">Your Entries</h2>
+            <table className="min-w-full bg-white border border-gray-300">
+              <thead>
+                <tr>
+                  <th className="py-2 px-4 border-b">Category</th>
+                  <th className="py-2 px-4 border-b">Site URL</th>
+                  <th className="py-2 px-4 border-b">Username</th>
+                  <th className="py-2 px-4 border-b">Email</th>
+                  <th className="py-2 px-4 border-b">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {credentials.map((credential) => (
+                  <tr key={credential.credential_id}>
+                    <td className="py-2 px-4 border-b">
+                      {
+                        categories.find(
+                          (cat) => cat.category_id === credential.category_id
+                        )?.category_name
+                      }
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {credential.site_url}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {credential.username}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {credential.user_email}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {credential.site_notes}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <button
-        onClick={handleLogout}
-        className="fixed bottom-4 right-4 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-      >
-        Logout
-      </button>
+      <div className="bg-blue-600 text-white py-4 text-center">
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 }
