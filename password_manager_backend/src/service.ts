@@ -4,7 +4,6 @@ import {
   createNewCredential,
   createNewUser,
   create_new_category,
-  getAllCategories,
   getAllCredentials,
   getCredentialsByCategory,
   get_user,
@@ -39,7 +38,7 @@ export const create_new_app_category = async (
 };
 
 export const get_app_user = async (username: string, user_password: string) => {
-  const user_from_db = await get_user(username, user_password);
+  const user_from_db = await get_user(username);
 
   if (!user_from_db) {
     throw new Error("User not found");

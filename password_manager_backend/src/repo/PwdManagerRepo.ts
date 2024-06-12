@@ -19,11 +19,10 @@ export const createNewUser = async (
     .executeTakeFirstOrThrow();
 };
 
-export const get_user = async (username: string, user_password: string) => {
+export const get_user = async (username: string) => {
   const user_from_db = await db
     .selectFrom("users")
     .where("username", "=", username)
-    .where("user_password", "=", user_password)
     .selectAll()
     .executeTakeFirst();
 
@@ -58,8 +57,12 @@ export const create_new_category = async (
     .executeTakeFirst();
 };
 
-export const getAllCategories = async () => {
-  return await db.selectFrom("categories").selectAll().execute();
+export const getAllCategoriesFromUser = async (user_id: number) => {
+  return await db
+    .selectFrom("categories")
+    .where("user_id", "=", user_id)
+    .selectAll()
+    .execute();
 };
 
 export const getAllCredentials = async (user_id: number) => {

@@ -1,11 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import {
-  create_new_category,
-  getAllCategories,
-  getAllCredentials,
-  getCredentialsByCategory,
-} from "./repo/PwdManagerRepo";
+import { getAllCategoriesFromUser } from "./repo/PwdManagerRepo";
 import {
   createNewAppCredential,
   createNewAppUser,
@@ -120,9 +115,10 @@ app.post("/v1/categories", async (c) => {
   return c.json(newCategory, 200);
 });
 
-app.get("/v1/categories", async (c) => {
+app.post("/v1/get/categories", async (c) => {
+  const user_id = await c.req.json();
   try {
-    const categories = await getAllCategories();
+    const categories = await getAllCategoriesFromUser(user_id);
     return c.json(categories, 200);
   } catch (err) {
     return c.json({ error: "Error fetching categories" }, 500);

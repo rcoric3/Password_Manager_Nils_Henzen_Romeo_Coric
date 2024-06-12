@@ -27,7 +27,13 @@ export default function Dashboard() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("http://localhost:4000/v1/categories");
+      const response = await fetch("http://localhost:4000/v1/get/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userId),
+      });
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -40,6 +46,7 @@ export default function Dashboard() {
   };
 
   const fetchCredentials = async () => {
+    console.log(selectedCategoryId);
     try {
       const requestBody = {
         user_id: userId,
@@ -69,6 +76,7 @@ export default function Dashboard() {
       console.error("Error fetching credentials:", error);
     }
   };
+
   useEffect(() => {
     fetchCategories();
     fetchCredentials();
@@ -147,8 +155,8 @@ export default function Dashboard() {
     }
   };
 
-  const handleCategoryChange = (categoryId) => {
-    setSelectedCategoryId(categoryId);
+  const handleCategoryChange = async (categoryId) => {
+    await setSelectedCategoryId(categoryId);
     fetchCredentials();
   };
   return (
@@ -296,7 +304,6 @@ export default function Dashboard() {
             <table className="min-w-full bg-white border border-gray-300">
               <thead>
                 <tr>
-                  <th className="py-2 px-4 border-b">Category</th>
                   <th className="py-2 px-4 border-b">Site URL</th>
                   <th className="py-2 px-4 border-b">Username</th>
                   <th className="py-2 px-4 border-b">Password</th>
@@ -307,13 +314,6 @@ export default function Dashboard() {
               <tbody>
                 {credentials.map((credential) => (
                   <tr key={credential.credential_id}>
-                    <td className="py-2 px-4 border-b">
-                      {
-                        categories.find(
-                          (cat) => cat.category_id === credential.category_id
-                        )?.category_name
-                      }
-                    </td>
                     <td className="py-2 px-4 border-b">
                       {credential.site_url}
                     </td>
