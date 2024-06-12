@@ -4,11 +4,13 @@ import {
   createNewCredential,
   createNewUser,
   create_new_category,
+  deleteCredential,
   getAllCredentials,
   getCredentialsByCategory,
   get_user,
   get_user_by_id,
   get_user_by_unique_key,
+  updateCredential,
   update_user_password,
 } from "./repo/PwdManagerRepo";
 import CryptoJS from "crypto-js";
@@ -163,3 +165,41 @@ export const resetUserPassword = async (unique_key: string, new_password: string
 
   return { message: "Password reset successful" };
 };
+
+export const updateAppCredential = async (
+  credential_id: number,
+  site_url: string,
+  username: string,
+  user_password: string,
+  site_notes: string | null,
+  user_email: string | null,
+  category_id: number,
+  user_id: number
+): Promise<Credentials | undefined> => {
+  const user = await get_user_by_id(user_id);
+
+  if (!user || !user.unique_key) {
+    throw new Error("User not found or user has no unique key");
+  }
+
+  const unique_key = user?.unique_key;
+  const encryptedPassword = encryptPassword(user_password, unique_key);
+
+  const updatedCredential: Credentials = {
+    credential_id,
+    site_url,
+    username,
+    user_password: encryptedPassword,
+    site_notes,
+    user_email,
+    category_id,
+    user_id,
+  };
+
+  return await updateCredential(updatedCredential);
+};
+
+export const deleteAppCredential = async (credential_id: number) => {
+  return await deleteCredential(credential_id);
+};
+

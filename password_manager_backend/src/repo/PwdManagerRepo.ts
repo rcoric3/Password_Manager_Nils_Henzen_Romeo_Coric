@@ -103,3 +103,29 @@ export const update_user_password = async (
     .where("user_id", "=", user_id)
     .executeTakeFirst();
 };
+
+export const updateCredential = async (
+  credential: Credentials
+): Promise<Credentials | undefined> => {
+  return await db
+    .updateTable("credentials")
+    .set({
+      site_url: credential.site_url,
+      username: credential.username,
+      user_password: credential.user_password,
+      site_notes: credential.site_notes,
+      user_email: credential.user_email,
+      category_id: credential.category_id,
+      user_id: credential.user_id,
+    })
+    .where("credential_id", "=", credential.credential_id)
+    .returningAll()
+    .executeTakeFirst();
+};
+
+export const deleteCredential = async (credential_id: number) => {
+  return await db
+    .deleteFrom("credentials")
+    .where("credential_id", "=", credential_id)
+    .executeTakeFirst();
+};

@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [credentials, setCredentials] = useState([]);
+  const [editCredentialId, setEditCredentialId] = useState(null);
 
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isCredentialFormVisible, setIsCredentialFormVisible] = useState(false);
@@ -83,8 +84,8 @@ export default function Dashboard() {
     fetchCredentials();
   }, []);
 
-  const handleCreateNewCredential = async () => {
-    const newCredential = {
+  const handleCreateOrUpdateCredential = async () => {
+    const credentialData = {
       site_url: siteUrl,
       username: credentialUsername,
       user_password: userPassword,
@@ -95,22 +96,73 @@ export default function Dashboard() {
     };
 
     try {
-      const response = await fetch("http://localhost:4000/v1/credentials", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newCredential),
-      });
+      let response;
+      if (editCredentialId) {
+        credentialData.credential_id = editCredentialId;
+        response = await fetch("http://localhost:4000/v1/credentials", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(credentialData),
+        });
+      } else {
+        response = await fetch("http://localhost:4000/v1/credentials", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(credentialData),
+        });
+      }
 
       if (response.ok) {
-        alert("New credential created successfully");
+        alert(
+          editCredentialId
+            ? "Credential updated successfully"
+            : "New credential created successfully"
+        );
         setSiteUrl("");
         setCredentialUsername("");
         setUserPassword("");
         setSiteNotes("");
         setUserEmail("");
+        setEditCredentialId(null);
         setIsCredentialFormVisible(false);
+        fetchCredentials();
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || "Unknown error");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleEditCredential = (credential) => {
+    setEditCredentialId(credential.credential_id);
+    setSiteUrl(credential.site_url);
+    setCredentialUsername(credential.username);
+    setUserPassword(credential.user_password);
+    setSiteNotes(credential.site_notes);
+    setUserEmail(credential.user_email);
+    setSelectedCategoryId(credential.category_id.toString());
+    setIsCredentialFormVisible(true);
+  };
+
+  const handleDeleteCredential = async (credential_id) => {
+    try {
+      const response = await fetch("http://localhost:4000/v1/credentials", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ credential_id }),
+      });
+
+      if (response.ok) {
+        alert("Credential deleted successfully");
+        fetchCredentials();
       } else {
         const errorData = await response.json();
         alert(errorData.error || "Unknown error");
@@ -160,6 +212,7 @@ export default function Dashboard() {
     await setSelectedCategoryId(categoryId);
     fetchCredentials();
   };
+
   return (
     <div className="relative min-h-screen flex flex-col">
       <ResetPasswordButton />
@@ -177,7 +230,7 @@ export default function Dashboard() {
             onClick={() => setIsCredentialFormVisible(true)}
             className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 mr-4"
           >
-            Create Entry
+            {editCredentialId ? "Edit Entry" : "Create Entry"}
           </button>
           <button
             onClick={() => setIsCategoryFormVisible(true)}
@@ -188,7 +241,9 @@ export default function Dashboard() {
 
           {isCredentialFormVisible && (
             <div className="p-4 bg-white rounded-md mt-4">
-              <h2 className="text-xl font-bold mb-2">Create New Entry</h2>
+              <h2 className="text-xl font-bold mb-2">
+                {editCredentialId ? "Edit Entry" : "Create New Entry"}
+              </h2>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <select
                   value={selectedCategoryId}
@@ -244,10 +299,10 @@ export default function Dashboard() {
                 />
               </div>
               <button
-                onClick={handleCreateNewCredential}
+                onClick={handleCreateOrUpdateCredential}
                 className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
               >
-                Create
+                {editCredentialId ? "Update" : "Create"}
               </button>
               <button
                 onClick={() => setIsCredentialFormVisible(false)}
@@ -311,6 +366,7 @@ export default function Dashboard() {
                   <th className="py-2 px-4 border-b">Password</th>
                   <th className="py-2 px-4 border-b">Email</th>
                   <th className="py-2 px-4 border-b">Notes</th>
+                  <th className="py-2 px-4 border-b">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -330,6 +386,22 @@ export default function Dashboard() {
                     </td>
                     <td className="py-2 px-4 border-b">
                       {credential.site_notes}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      <button
+                        onClick={() => handleEditCredential(credential)}
+                        className="px-2 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleDeleteCredential(credential.credential_id)
+                        }
+                        className="ml-2 px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}

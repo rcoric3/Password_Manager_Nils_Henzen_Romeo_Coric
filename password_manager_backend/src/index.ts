@@ -5,10 +5,12 @@ import {
   createNewAppCredential,
   createNewAppUser,
   create_new_app_category,
+  deleteAppCredential,
   get_all_app_credentials,
   get_app_user,
   get_app_user_credential,
   resetUserPassword,
+  updateAppCredential,
 } from "./service";
 
 const app = new Hono();
@@ -17,7 +19,7 @@ app.use(
   "*",
   cors({
     origin: ["http://localhost:5173"],
-    allowMethods: ["POST", "GET", "OPTIONS", "DELETE"],
+    allowMethods: ["POST", "GET", "OPTIONS", "DELETE", "PUT"],
     maxAge: 600,
     credentials: true,
   })
@@ -167,6 +169,55 @@ app.post("/v1/reset-password", async (c) => {
     return c.json({ error: "Password reset failed" }, 500);
   }
 });
+
+app.put("/v1/credentials", async (c) => {
+  const {
+    credential_id,
+    site_url,
+    username,
+    user_password,
+    site_notes,
+    user_email,
+    category_id,
+    user_id,
+  } = await c.req.json();
+
+  if (!credential_id || typeof credential_id !== "number") {
+    return c.json({ error: "Invalid credential ID" }, 400);
+  }
+
+  try {
+    const updatedCredential = await updateAppCredential(
+      credential_id,
+      site_url,
+      username,
+      user_password,
+      site_notes,
+      user_email,
+      category_id,
+      user_id
+    );
+    return c.json(updatedCredential, 200);
+  } catch (err) {
+    return c.json({ err: "Error updating credential" }, 500);
+  }
+});
+
+app.delete("/v1/credentials", async (c) => {
+  const { credential_id } = await c.req.json();
+
+  if (!credential_id || typeof credential_id !== "number") {
+    return c.json({ error: "Invalid credential ID" }, 400);
+  }
+
+  try {
+    await deleteAppCredential(credential_id);
+    return c.json({ message: "Credential deleted successfully" }, 200);
+  } catch (err) {
+    return c.json({ err: "Error deleting credential" }, 500);
+  }
+});
+
 
 export default {
   port: 4000,
