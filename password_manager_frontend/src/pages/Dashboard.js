@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import ResetPasswordButton from "../components/PasswordResetButton";
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
@@ -161,6 +162,7 @@ export default function Dashboard() {
   };
   return (
     <div className="relative min-h-screen flex flex-col">
+      <ResetPasswordButton />
       <div className="bg-blue-600 text-white py-8">
         <div className="container mx-auto text-center">
           <h1 className="text-5xl font-bold mb-2">

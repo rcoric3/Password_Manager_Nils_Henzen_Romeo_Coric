@@ -8,6 +8,7 @@ import {
   get_all_app_credentials,
   get_app_user,
   get_app_user_credential,
+  resetUserPassword,
 } from "./service";
 
 const app = new Hono();
@@ -138,6 +139,32 @@ app.post("/v1/user/credentials", async (c) => {
     return c.json(credentials, 200);
   } catch (err) {
     return c.json({ error: "Error fetching credentials" }, 500);
+  }
+});
+
+app.post("/v1/reset-password", async (c) => {
+  const { unique_key, new_password } = await c.req.json();
+
+  if (
+    !unique_key ||
+    typeof unique_key !== "string" ||
+    unique_key.trim() === ""
+  ) {
+    return c.json({ error: "Invalid unique key" }, 400);
+  }
+  if (
+    !new_password ||
+    typeof new_password !== "string" ||
+    new_password.trim() === ""
+  ) {
+    return c.json({ error: "Invalid password" }, 400);
+  }
+
+  try {
+    await resetUserPassword(unique_key, new_password);
+    return c.json({ message: "Password reset successful" }, 200);
+  } catch (err) {
+    return c.json({ error: "Password reset failed" }, 500);
   }
 });
 

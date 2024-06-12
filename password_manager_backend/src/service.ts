@@ -8,6 +8,8 @@ import {
   getCredentialsByCategory,
   get_user,
   get_user_by_id,
+  get_user_by_unique_key,
+  update_user_password,
 } from "./repo/PwdManagerRepo";
 import CryptoJS from "crypto-js";
 
@@ -146,4 +148,18 @@ export const get_all_app_credentials = async (user_id: number) => {
   }));
 
   return credentialsWithConvertedPWD;
+};
+
+export const resetUserPassword = async (unique_key: string, new_password: string) => {
+  const user_from_db = await get_user_by_unique_key(unique_key);
+
+  if (!user_from_db) {
+    throw new Error("User not found");
+  }
+
+  const hashedPassword = await Bun.password.hash(new_password);
+
+  await update_user_password(user_from_db.user_id, hashedPassword);
+
+  return { message: "Password reset successful" };
 };

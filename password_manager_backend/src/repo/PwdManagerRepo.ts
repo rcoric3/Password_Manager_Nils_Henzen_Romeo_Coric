@@ -84,3 +84,22 @@ export const getCredentialsByCategory = async (
     .selectAll()
     .execute();
 };
+
+export const get_user_by_unique_key = async (unique_key: string) => {
+  return await db
+    .selectFrom("users")
+    .where("unique_key", "=", unique_key)
+    .selectAll()
+    .executeTakeFirst();
+};
+
+export const update_user_password = async (
+  user_id: number,
+  hashedPassword: string
+) => {
+  return await db
+    .updateTable("users")
+    .set({ user_password: hashedPassword })
+    .where("user_id", "=", user_id)
+    .executeTakeFirst();
+};
