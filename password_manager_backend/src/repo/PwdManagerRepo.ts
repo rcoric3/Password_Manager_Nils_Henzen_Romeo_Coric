@@ -1,3 +1,4 @@
+import { use } from "hono/jsx";
 import { db } from "../db";
 import {
   Users,
@@ -22,10 +23,19 @@ export const get_user = async (username: string, user_password: string) => {
   const user_from_db = await db
     .selectFrom("users")
     .where("username", "=", username)
+    .where("user_password", "=", user_password)
     .selectAll()
     .executeTakeFirst();
 
   return user_from_db;
+};
+
+export const get_user_by_id = async (user_id: number) => {
+  return await db
+    .selectFrom("users")
+    .where("user_id", "=", user_id)
+    .selectAll()
+    .executeTakeFirst();
 };
 
 export const createNewCredential = async (

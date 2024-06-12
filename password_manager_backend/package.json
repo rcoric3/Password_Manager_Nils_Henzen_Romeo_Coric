@@ -6,6 +6,7 @@
     "db:down": "docker-compose -f db/docker-compose.yml down"
   },
   "dependencies": {
+    "crypto-js": "^4.2.0",
     "hono": "^4.3.10",
     "kysely": "^0.27.3",
     "pg": "^8.11.5",
@@ -13,6 +14,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/crypto-js": "^4.2.2",
     "@types/pg": "^8.10.9",
     "@types/uuid": "^9.0.8",
     "bun-types": "^1.0.7",

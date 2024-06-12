@@ -38,6 +38,7 @@ export default function Register() {
 
       if (response.ok) {
         const data = await response.json();
+        localStorage.setItem("token");
         setUnique_key(data);
         setShowPopup(true);
       } else {

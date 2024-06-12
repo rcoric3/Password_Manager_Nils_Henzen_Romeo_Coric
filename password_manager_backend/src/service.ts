@@ -1,11 +1,16 @@
 import { v4 as uuidv4 } from "uuid";
-import { NewCredential, Users } from "./types";
+import { Credentials, NewCredential, Users } from "./types";
 import {
   createNewCredential,
   createNewUser,
   create_new_category,
+  getAllCategories,
+  getAllCredentials,
+  getCredentialsByCategory,
   get_user,
+  get_user_by_id,
 } from "./repo/PwdManagerRepo";
+import CryptoJS from "crypto-js";
 
 export const createNewAppUser = async (
   username: string,
@@ -51,6 +56,21 @@ export const get_app_user = async (username: string, user_password: string) => {
   return user_from_db;
 };
 
+const encryptPassword = (password: string, key: string) => {
+  if (!password || !key) {
+    throw new Error("Password and key must be provided");
+  }
+  return CryptoJS.AES.encrypt(password, key).toString();
+};
+
+const decryptPassword = (ciphertext: string, key: string) => {
+  if (!ciphertext || !key) {
+    throw new Error("Ciphertext and key must be provided");
+  }
+  const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+  return bytes.toString(CryptoJS.enc.Utf8);
+};
+
 export const createNewAppCredential = async (
   site_url: string,
   username: string,
@@ -60,10 +80,20 @@ export const createNewAppCredential = async (
   category_id: number,
   user_id: number
 ): Promise<NewCredential | undefined> => {
+  const user = await get_user_by_id(user_id);
+
+  if (!user || !user.unique_key) {
+    throw new Error("User not found or user has no unique key");
+  }
+
+  const unique_key = user?.unique_key;
+
+  const encryptedPassword = encryptPassword(user_password, unique_key);
+
   const newCredential: NewCredential = {
     site_url,
     username,
-    user_password,
+    user_password: encryptedPassword,
     site_notes,
     user_email,
     category_id,
@@ -71,4 +101,50 @@ export const createNewAppCredential = async (
   };
 
   return await createNewCredential(newCredential);
+};
+
+export const get_app_user_credential = async (
+  user_id: number,
+  category_id: number
+) => {
+  const user = await get_user_by_id(user_id);
+  if (!user || !user.unique_key) {
+    throw new Error("User not found or user has no unique key");
+  }
+
+  const unique_key = user.unique_key;
+
+  const credentials = await getCredentialsByCategory(user_id, category_id);
+
+  if (!credentials || credentials.length === 0) {
+    throw new Error("Credentials not found");
+  }
+
+  const credentialsWithConvertedPWD = credentials.map((cred) => ({
+    ...cred,
+    user_password: decryptPassword(cred.user_password, unique_key),
+  }));
+  return credentialsWithConvertedPWD;
+};
+
+export const get_all_app_credentials = async (user_id: number) => {
+  const user = await get_user_by_id(user_id);
+  if (!user || !user.unique_key) {
+    throw new Error("User not found or user has no unique key");
+  }
+
+  const unique_key = user.unique_key;
+
+  const credentials = await getAllCredentials(user_id);
+
+  if (!credentials || credentials.length === 0) {
+    throw new Error("Credentials not found");
+  }
+
+  const credentialsWithConvertedPWD = credentials.map((cred) => ({
+    ...cred,
+    user_password: decryptPassword(cred.user_password, unique_key),
+  }));
+
+  return credentialsWithConvertedPWD;
 };

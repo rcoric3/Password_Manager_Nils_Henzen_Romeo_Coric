@@ -20,40 +20,44 @@ export default function Dashboard() {
   const [isCredentialFormVisible, setIsCredentialFormVisible] = useState(false);
   const [isCategoryFormVisible, setIsCategoryFormVisible] = useState(false);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("http://localhost:4000/v1/categories");
-        if (response.ok) {
-          const data = await response.json();
-          setCategories(data);
-        } else {
-          console.error("Error fetching categories");
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/v1/categories");
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      } else {
+        console.error("Error fetching categories");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
-    fetchCategories();
-    fetchCredentials();
-  }, []);
-
-  //encryption anschauen
-
-  const fetchCredentials = async (categoryId = null) => {
+  const fetchCredentials = async () => {
     try {
       const requestBody = {
         user_id: userId,
-        category_id: categoryId ? parseInt(categoryId) : undefined,
+        category_id:
+          selectedCategoryId || null
+            ? parseInt(selectedCategoryId || null)
+            : undefined,
       };
-      const response = await fetch("http://localhost:4000/v1/credentials", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
+      const response = await fetch(
+        "http://localhost:4000/v1/user/credentials",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -65,11 +69,10 @@ export default function Dashboard() {
       console.error("Error fetching credentials:", error);
     }
   };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+  useEffect(() => {
+    fetchCategories();
+    fetchCredentials();
+  }, []);
 
   const handleCreateNewCredential = async () => {
     const newCredential = {
@@ -98,7 +101,6 @@ export default function Dashboard() {
         setUserPassword("");
         setSiteNotes("");
         setUserEmail("");
-        fetchCredentials();
         setIsCredentialFormVisible(false);
       } else {
         const errorData = await response.json();
@@ -147,7 +149,7 @@ export default function Dashboard() {
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategoryId(categoryId);
-    fetchCredentials(categoryId);
+    fetchCredentials();
   };
   return (
     <div className="relative min-h-screen flex flex-col">
@@ -297,6 +299,7 @@ export default function Dashboard() {
                   <th className="py-2 px-4 border-b">Category</th>
                   <th className="py-2 px-4 border-b">Site URL</th>
                   <th className="py-2 px-4 border-b">Username</th>
+                  <th className="py-2 px-4 border-b">Password</th>
                   <th className="py-2 px-4 border-b">Email</th>
                   <th className="py-2 px-4 border-b">Notes</th>
                 </tr>
@@ -316,6 +319,9 @@ export default function Dashboard() {
                     </td>
                     <td className="py-2 px-4 border-b">
                       {credential.username}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {credential.user_password}
                     </td>
                     <td className="py-2 px-4 border-b">
                       {credential.user_email}

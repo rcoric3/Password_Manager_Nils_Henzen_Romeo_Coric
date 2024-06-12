@@ -10,7 +10,9 @@ import {
   createNewAppCredential,
   createNewAppUser,
   create_new_app_category,
+  get_all_app_credentials,
   get_app_user,
+  get_app_user_credential,
 } from "./service";
 
 const app = new Hono();
@@ -127,15 +129,15 @@ app.get("/v1/categories", async (c) => {
   }
 });
 
-app.get("/v1/credentials", async (c) => {
+app.post("/v1/user/credentials", async (c) => {
   const { user_id, category_id } = await c.req.json();
 
   try {
     let credentials;
     if (!category_id) {
-      credentials = await getAllCredentials(user_id);
+      credentials = await get_all_app_credentials(user_id);
     } else {
-      credentials = await getCredentialsByCategory(user_id, category_id);
+      credentials = await get_app_user_credential(user_id, category_id);
     }
     return c.json(credentials, 200);
   } catch (err) {
