@@ -41,7 +41,7 @@ app.post("/v1/register", async (c) => {
 
   try {
     const newUser = await createNewAppUser(username, user_password);
-    return c.json(newUser?.unique_key, 200);
+    return c.json(newUser, 200);
   } catch (err) {
     return c.json({ err: "Error creating user" }, 500);
   }
@@ -217,7 +217,6 @@ app.delete("/v1/credentials", async (c) => {
     return c.json({ err: "Error deleting credential" }, 500);
   }
 });
-
 
 export default {
   port: 4000,

@@ -69,8 +69,14 @@ export default function Register() {
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("token");
-        setUnique_key(data);
+        localStorage.setItem(
+          "token",
+          JSON.stringify({
+            username: sanitizedUsername,
+            user_id: data.user_id,
+          })
+        );
+        setUnique_key(data.unique_key);
         setShowPopup(true);
       } else {
         const errorData = await response.json();
@@ -158,6 +164,9 @@ export default function Register() {
             <h2 className="text-2xl mb-4">Registration Successful!</h2>
             <p className="mb-4">
               Your Unique Key is: <strong>{unique_key}</strong>
+            </p>
+            <p className="mb-4">
+              Safe your unique key if you want to change things!
             </p>
             <button
               onClick={copyToClipboard}

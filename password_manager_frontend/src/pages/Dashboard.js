@@ -82,7 +82,7 @@ export default function Dashboard() {
   useEffect(() => {
     fetchCategories();
     fetchCredentials();
-  }, []);
+  }, [selectedCategoryId]);
 
   const handleCreateOrUpdateCredential = async () => {
     const credentialData = {
@@ -179,8 +179,8 @@ export default function Dashboard() {
     }
 
     const newCategory = {
-      category_name: newCategoryName,
       user_id: userId,
+      category_name: newCategoryName,
     };
 
     try {
