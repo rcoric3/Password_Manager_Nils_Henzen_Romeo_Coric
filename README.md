@@ -5,7 +5,13 @@
 ### Projektstruktur
 - Package manager: bun
 - Frontend: React
+    - ```bash
+    http://localhost:5173/login
+    ```
 - Backend: Hono
+    -```bash
+    http://localhost:4000
+    ```
 - Database: Postgres
 
 ## Set-up:
