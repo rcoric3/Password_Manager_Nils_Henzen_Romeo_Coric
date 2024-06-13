@@ -2,7 +2,7 @@
 
 # Dokumentation
 
-### Projectstruktur
+### Projektstruktur
 - Package manager: bun
 - Frontend: React
 - Backend: Hono
@@ -11,6 +11,10 @@
 ## Set-up:
 
 - Bun installieren
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
 - Danach mit bun die packages runterladen, sowohl im frontend wie im Backend
 
 ```bash
