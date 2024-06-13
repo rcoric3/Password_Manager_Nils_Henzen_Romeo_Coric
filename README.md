@@ -2,7 +2,7 @@
 
 # Dokumentation
 
-### Projektstruktur:
+## Projektstruktur:
 
 - Package manager: bun
 - Frontend: React
