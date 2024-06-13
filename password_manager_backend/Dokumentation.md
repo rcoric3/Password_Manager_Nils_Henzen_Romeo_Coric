@@ -15,6 +15,7 @@ Bei dem zurücksetzen eines Passwortes, wird der Benutzername gebraucht, auf wel
 
 ## Login
 Um sich als Benutzer in die Applikation einzuloggen, muss der Benutzername des Kontos, sowie das Passwort, wessen Hash in der Datenbank liegt, korrekt eingegeben werden. Nach einem korrekten Login wird ein Token gesetzt, was nötig ist, um die Verbindung abzusichern.
+
 <img src="https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/bc4894a2-4c83-4d2b-bf42-256aef51fb17" alt="Image Description" height="200">
 
 ## Passwort Ver- & Entschlüsselung
