@@ -70,7 +70,6 @@ bun run start
 #### Path 
 - #### password_manager_backend/.env
 
-
 ```bash
 DATABASE_URL=postgres://user:password@127.0.0.1:5432/passwordManager?sslmode=disable
 ```
