@@ -23,3 +23,28 @@ Um ein Passwort, welches der Benutzer speichern möchte und zu einem späteren Z
 
 ## Reflexion 
 Das Projekt selbst war teilweise sehr anspruchsvoll und regte zum Denken an, da man zuerst eine sichere und schlaue Idee braucht, wie man das Root Passwort wieder ändern kann und wie man dies abspeichert. Ebenfalls war die Verschlüsselung, welche für die zu verwaltenden Passwörter gebraucht wurde, aufwändig und kompliziert. Durch die genaue Planung am Anfang, was wie funktionieren soll, mussten wenig Änderungen an bereits Erledigtem während der Umsetzung gemacht werden, was Zeit sowie auch Aufwand sparte.
+
+# Use Cases
+## Use Case 1: Benutzer einloggen und Passwörter ansehen
+Ein Benutzer möchte sich in den Passwort-Manager einloggen und seine gespeicherten Passwörter ansehen.
+## Schritte:
+### Benutzerregistrierung:
+- Der Benutzer registriert sich mit einem Benutzernamen und einem Passwort.
+- Das Passwort wird mit bcrypt gehasht und in der Datenbank gespeichert.
+- Ein unique_key wird für den Benutzer generiert und ebenfalls gespeichert.
+### Benutzeranmeldung:
+- Der Benutzer gibt seinen Benutzernamen und sein Passwort ein.
+- Das Passwort wird mit dem in der Datenbank gespeicherten Hash verglichen.
+- Bei erfolgreicher Authentifizierung wird ein JWT-Token generiert und an den Benutzer zurückgegeben.
+### Passwörter ansehen:
+- Der Benutzer fordert seine Passwörter an, indem er den JWT-Token in der Anfrage übermittelt.
+- Der Server entschlüsselt die Passwörter mit dem unique_key des Benutzers und gibt sie zurück.
+
+## Use Case 2: Passwort ändern
+Ein Benutzer möchte sein Passwort ändern. Dazu muss er seinen unique_key eingeben, ein neues Passwort und confirm eingeben
+## Schritte:
+### Passwortänderungsanforderung:
+- Der Benutzer gibt seinen unique_key, ein neues Passwort und confirm ein.
+- Das neue Passwort wird validiert.
+### Passwortänderung:
+- Der Server überprüft den unique_key und ändert das Passwort des Benutzers, nachdem es gehasht wurde.
