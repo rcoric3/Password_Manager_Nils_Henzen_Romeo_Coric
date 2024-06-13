@@ -2,22 +2,23 @@
 
 # Dokumentation
 
-Projektstruktur:
+### Projektstruktur:
 
-- Frontend: React js
-- Backend: Bun js
+- Package manager: bun
+- Frontend: React
+- Backend: Hono
 - Database: Postgres
 
 ## Set-up:
 
 - Bun installieren
-  Danach mit bun die packages runterladen, sowohl im frontend wie im Backend
+- Danach mit bun die packages runterladen, sowohl im frontend wie im Backend
 
 ```bash
 bun install
 ```
 
-## /backend
+## /password_manager_backend
 
 ### Um die Datenbank zu starten im /backend folder
 
@@ -43,14 +44,14 @@ bun run db:down
 bun run dev
 ```
 
-## /frontend
+## /password_manager_frontend
 
 ### Um das frontend zu starten
 
 ```bash
 bun run start
 ```
-## Env Files
+## Env Files für die Datenbank
 
 ### Env files im backend /backend .env
 
