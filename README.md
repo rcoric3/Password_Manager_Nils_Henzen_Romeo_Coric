@@ -13,7 +13,7 @@
 - Database: Postgres
     - PORT 5432
 
-## Set-up:
+# Set-up:
 
 - Bun installieren
 ```bash
@@ -59,6 +59,11 @@ bun run dev
 ```bash
 bun run start
 ```
+
+## DB
+- Benutzername: user
+- Passwort: password
+
 ## Env Files für die Datenbank
 
 ### Env files im backend /backend .env
