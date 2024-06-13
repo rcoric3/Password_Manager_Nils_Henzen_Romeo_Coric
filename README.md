@@ -66,7 +66,9 @@ bun run start
 
 ## Env Files für die Datenbank
 
-### Env files im backend /backend .env
+### Env files im backend password_manager_backend/.env 
+- path 
+#### password_manager_backend/.env
 
 ```bash
 DATABASE_URL=postgres://user:password@127.0.0.1:5432/passwordManager?sslmode=disable
