@@ -2,8 +2,7 @@
 
 # Dokumentation
 
-### Projektstruktur
-
+### Projectstruktur
 - Package manager: bun
 - Frontend: React
 - Backend: Hono
