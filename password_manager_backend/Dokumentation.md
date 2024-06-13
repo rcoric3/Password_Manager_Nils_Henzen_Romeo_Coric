@@ -20,6 +20,7 @@ Um sich als Benutzer in die Applikation einzuloggen, muss der Benutzername des K
 
 ## Passwort Ver- & Entschlüsselung
 Um ein Passwort, welches der Benutzer speichern möchte und zu einem späteren Zeitpunkt wieder ansehen möchte, in der Datenbank sinnvoll zu speichern, wird das Passwort auf die AES-Weise verschlüsselt. Dies ist notwendig, da das hashing hier zu nichts führen würde, weil das Passwort dann nicht entschlüsselt und als Klartext angezeigt werden kann. Ebenfalls wäre die Option gar nichts mit dem Passwort zu machen ungeeignet, weil es dann als Klartext ersichtlich in der Datenbank liegen würde. Die Verschlüsselung, sowie die Entschlüsselung sind in der Abbildung zu sehen. CryptoJS ermöglicht eine einfache und effiziente Verschlüsselung und Entschlüsselung von Daten innerhalb von Webanwendungen, sowohl auf Client- als auch auf Serverseite. Zudem ist es einfach zu integrieren, plattformunabhängig und gut dokumentiert, was eine schnelle Implementation der wichtigen Sicherheitsmechanismen ermöglicht.
+
 <img src="https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/fe160404-f82a-4717-af2b-ffcbeab046ae" alt="Image Description" height="200">
 
 ## Reflexion 
