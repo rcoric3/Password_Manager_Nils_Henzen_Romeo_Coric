@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import ResetPasswordButton from "../components/PasswordResetButton";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import TextField from "@mui/material/TextField";
+import Pagination from "@mui/material/Pagination";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
 
 export default function Dashboard() {
   const [, navigate] = useLocation();
@@ -21,6 +32,10 @@ export default function Dashboard() {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isCredentialFormVisible, setIsCredentialFormVisible] = useState(false);
   const [isCategoryFormVisible, setIsCategoryFormVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -48,7 +63,6 @@ export default function Dashboard() {
   };
 
   const fetchCredentials = async () => {
-    console.log(selectedCategoryId);
     try {
       const requestBody = {
         user_id: userId,
@@ -213,6 +227,51 @@ export default function Dashboard() {
     fetchCredentials();
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const filteredData = credentials.filter((item) =>
+    Object.values(item).some((value) =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
+  const sortedData = React.useMemo(() => {
+    let sortableData = [...filteredData];
+    if (sortConfig.key) {
+      sortableData.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === "asc" ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === "asc" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableData;
+  }, [filteredData, sortConfig]);
+
+  const paginatedData = sortedData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+
   return (
     <div className="relative min-h-screen flex flex-col">
       <ResetPasswordButton />
@@ -226,18 +285,21 @@ export default function Dashboard() {
       </div>
       <div className="container mx-auto p-4 flex-grow">
         <div className="overflow-x-auto">
-          <button
+          <Button
             onClick={() => setIsCredentialFormVisible(true)}
-            className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 mr-4"
+            variant="contained"
+            color="primary"
+            className="mr-4"
           >
             {editCredentialId ? "Edit Entry" : "Create Entry"}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setIsCategoryFormVisible(true)}
-            className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+            variant="contained"
+            color="primary"
           >
             Create Category
-          </button>
+          </Button>
 
           {isCredentialFormVisible && (
             <div className="p-4 bg-white rounded-md mt-4">
@@ -262,54 +324,54 @@ export default function Dashboard() {
                     </option>
                   ))}
                 </select>
-                <input
-                  type="text"
-                  placeholder="Site URL"
+                <TextField
+                  label="Site URL"
                   value={siteUrl}
                   onChange={(e) => setSiteUrl(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md"
+                  fullWidth
                 />
-                <input
-                  type="text"
-                  placeholder="Username"
+                <TextField
+                  label="Username"
                   value={credentialUsername}
                   onChange={(e) => setCredentialUsername(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md"
+                  fullWidth
                 />
-                <input
+                <TextField
+                  label="Password"
                   type="password"
-                  placeholder="Password"
                   value={userPassword}
                   onChange={(e) => setUserPassword(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md"
+                  fullWidth
                 />
-                <input
-                  type="text"
-                  placeholder="Email"
+                <TextField
+                  label="Email"
                   value={userEmail}
                   onChange={(e) => setUserEmail(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md"
+                  fullWidth
                 />
-                <input
-                  type="text"
-                  placeholder="Notes"
+                <TextField
+                  label="Notes"
                   value={siteNotes}
                   onChange={(e) => setSiteNotes(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md col-span-2"
+                  fullWidth
+                  multiline
+                  rows={4}
                 />
               </div>
-              <button
+              <Button
                 onClick={handleCreateOrUpdateCredential}
-                className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+                variant="contained"
+                color="primary"
               >
                 {editCredentialId ? "Update" : "Create"}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setIsCredentialFormVisible(false)}
-                className="px-4 py-2 bg-gray-300 text-black font-semibold rounded-md hover:bg-gray-400 ml-2"
+                variant="contained"
+                className="ml-2"
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           )}
 
@@ -317,26 +379,27 @@ export default function Dashboard() {
             <div className="p-4 bg-white rounded-md mt-4">
               <h2 className="text-xl font-bold mb-2">Create New Category</h2>
               <div className="mb-4">
-                <input
-                  type="text"
-                  placeholder="Category Name"
+                <TextField
+                  label="Category Name"
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md w-full"
+                  fullWidth
                 />
               </div>
-              <button
+              <Button
                 onClick={handleCreateNewCategory}
-                className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+                variant="contained"
+                color="primary"
               >
                 Create Category
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setIsCategoryFormVisible(false)}
-                className="px-4 py-2 bg-gray-300 text-black font-semibold rounded-md hover:bg-gray-400 ml-2"
+                variant="contained"
+                className="ml-2"
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           )}
 
@@ -358,65 +421,113 @@ export default function Dashboard() {
 
           <div className="mt-4">
             <h2 className="text-xl font-bold mb-2">Your Entries</h2>
-            <table className="min-w-full bg-white border border-gray-300">
-              <thead>
-                <tr>
-                  <th className="py-2 px-4 border-b">Site URL</th>
-                  <th className="py-2 px-4 border-b">Username</th>
-                  <th className="py-2 px-4 border-b">Password</th>
-                  <th className="py-2 px-4 border-b">Email</th>
-                  <th className="py-2 px-4 border-b">Notes</th>
-                  <th className="py-2 px-4 border-b">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {credentials.map((credential) => (
-                  <tr key={credential.credential_id}>
-                    <td className="py-2 px-4 border-b">
-                      {credential.site_url}
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      {credential.username}
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      {credential.user_password}
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      {credential.user_email}
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      {credential.site_notes}
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      <button
-                        onClick={() => handleEditCredential(credential)}
-                        className="px-2 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+            <TextField
+              label="Search"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              fullWidth
+              className="mb-4"
+            />
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortConfig.key === "site_url"}
+                        direction={sortConfig.direction}
+                        onClick={() => handleSort("site_url")}
                       >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleDeleteCredential(credential.credential_id)
-                        }
-                        className="ml-2 px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
+                        Site URL
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortConfig.key === "username"}
+                        direction={sortConfig.direction}
+                        onClick={() => handleSort("username")}
                       >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        Username
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortConfig.key === "user_password"}
+                        direction={sortConfig.direction}
+                        onClick={() => handleSort("user_password")}
+                      >
+                        Password
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortConfig.key === "user_email"}
+                        direction={sortConfig.direction}
+                        onClick={() => handleSort("user_email")}
+                      >
+                        Email
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortConfig.key === "site_notes"}
+                        direction={sortConfig.direction}
+                        onClick={() => handleSort("site_notes")}
+                      >
+                        Notes
+                      </TableSortLabel>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paginatedData.map((credential) => (
+                    <TableRow key={credential.credential_id}>
+                      <TableCell>{credential.site_url}</TableCell>
+                      <TableCell>
+                        {Array.isArray(credential.username)
+                          ? credential.username.join(", ")
+                          : credential.username}
+                      </TableCell>
+                      <TableCell>{credential.user_password}</TableCell>
+                      <TableCell>{credential.user_email}</TableCell>
+                      <TableCell>{credential.site_notes}</TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => handleEditCredential(credential)}
+                          variant="contained"
+                          color="secondary"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            handleDeleteCredential(credential.credential_id)
+                          }
+                          variant="contained"
+                          color="error"
+                          className="ml-2"
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              className="mt-4"
+            />
           </div>
         </div>
       </div>
       <div className="bg-blue-600 text-white py-4 text-center">
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
-        >
+        <Button onClick={handleLogout} variant="contained" color="error">
           Logout
-        </button>
+        </Button>
       </div>
     </div>
   );
