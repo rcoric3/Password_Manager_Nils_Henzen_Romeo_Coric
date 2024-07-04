@@ -66,10 +66,9 @@ export default function Dashboard() {
     try {
       const requestBody = {
         user_id: userId,
-        category_id:
-          selectedCategoryId || null
-            ? parseInt(selectedCategoryId || null)
-            : undefined,
+        category_id: selectedCategoryId
+          ? parseInt(selectedCategoryId)
+          : undefined,
       };
       const response = await fetch(
         "http://localhost:4000/v1/user/credentials",
@@ -94,9 +93,12 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchCategories();
     fetchCredentials();
   }, [selectedCategoryId]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const handleCreateOrUpdateCredential = async () => {
     const credentialData = {
@@ -222,9 +224,8 @@ export default function Dashboard() {
     }
   };
 
-  const handleCategoryChange = async (categoryId) => {
-    await setSelectedCategoryId(categoryId);
-    fetchCredentials();
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategoryId(categoryId);
   };
 
   const handleSearchChange = (event) => {
