@@ -4,6 +4,7 @@
 In dieser Dokumentation wird die Anwendung der Prinzipien der funktionalen Programmierung in der entwickelten Passwort-Safe-App beschrieben. Diese App ermöglicht Benutzern, Passwörter sicher zu speichern, zu sortieren, zu durchsuchen und zu verwalten. Dabei wurden verschiedene funktionale Programmierkonzepte eingesetzt, um eine robuste und erweiterbare Anwendung zu erstellen.
 
 ## Anwendung der funktionalen Programmierung
+Kompetenz AE1
 ### 1. Pure Functions
 In der Passwort-Safe-App wurden reine Funktionen verwendet, um sicherzustellen, dass Funktionen keine Seiteneffekte haben und bei gleichen Eingaben stets die gleichen Ausgaben liefern. Ein Beispiel dafür ist die Sortierfunktion, die die Passwort-Einträge sortiert, ohne die ursprünglichen Daten zu verändern. Diese Funktion nimmt die Daten als Eingabe, sortiert sie und gibt eine neue sortierte Liste zurück.
 
@@ -15,11 +16,13 @@ Um die Unveränderlichkeit von Daten sicherzustellen, wurden alle Datenstrukture
 <img src="https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/4fcded1a-8b89-4ebc-803e-02470a5255cd" alt="Bildbeschreibung" width="400">
 
 ### 3. Higher-Order Functions
+Kompetenz C4E
 Higher-Order Functions wurden verwendet, um flexiblen und wiederverwendbaren Code zu schreiben. Ein Beispiel hierfür ist die Filterfunktion, die eine Funktion als Parameter akzeptiert und auf die Liste der Passwort-Einträge anwendet.
 
 <img src="https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/b9cbc17c-3771-46c8-ac4f-253c54747d18" alt="Bildbeschreibung" width="400">
 
 ### 4. Lambda-Ausdrücke
+Kompetenz C3E
 Lambda-Ausdrücke wurden verwendet, um kompakte und anonyme Funktionen zu definieren, die häufig als Argumente für Higher-Order Functions verwendet werden. Dies ermöglicht eine klare und prägnante Codebasis, wie im folgenden Beispiel für die Suchfunktion:
 
 <img src="https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/c9914ff0-1d8f-4c87-905b-d43a14b95714" alt="Bildbeschreibung" width="400">
@@ -46,6 +49,7 @@ Die Filterfunktionen ermöglichen es den Benutzern, die Einträge nach bestimmte
 <img src="https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/08027ef0-2053-4155-9fa5-bd0f0dccabf5" width="400">
 
 ## Beispiele aus dem Projekt
+Kompetenz BE1
 ### 1. Sortierfunktion
 Die folgende Codezeile zeigt die Implementierung der Sortierfunktion, die die Passwort-Einträge nach verschiedenen Kriterien sortiert:
 
