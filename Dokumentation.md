@@ -17,12 +17,14 @@ Um die Unveränderlichkeit von Daten sicherzustellen, wurden alle Datenstrukture
 
 ### 3. Higher-Order Functions
 Kompetenz C4E
+
 Higher-Order Functions wurden verwendet, um flexiblen und wiederverwendbaren Code zu schreiben. Ein Beispiel hierfür ist die Filterfunktion, die eine Funktion als Parameter akzeptiert und auf die Liste der Passwort-Einträge anwendet.
 
 <img src="https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/b9cbc17c-3771-46c8-ac4f-253c54747d18" alt="Bildbeschreibung" width="400">
 
 ### 4. Lambda-Ausdrücke
 Kompetenz C3E
+
 Lambda-Ausdrücke wurden verwendet, um kompakte und anonyme Funktionen zu definieren, die häufig als Argumente für Higher-Order Functions verwendet werden. Dies ermöglicht eine klare und prägnante Codebasis, wie im folgenden Beispiel für die Suchfunktion:
 
 <img src="https://github.com/rcoric3/Password_Manager_Nils_Henzen_Romeo_Coric/assets/108061556/c9914ff0-1d8f-4c87-905b-d43a14b95714" alt="Bildbeschreibung" width="400">
